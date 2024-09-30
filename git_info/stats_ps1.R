@@ -72,7 +72,7 @@ hypothesis_test_result
 
 ## Part 1
 getwd
-expenditure <- read.table("C:\\Users\\OTTC\\Documents\\expenditure.txt", header = TRUE, sep = "\t")
+expenditure <- read.table("C:\\Users\\OTTC\\OneDrive - Trinity College Dublin\\expenditure.txt", header = TRUE, sep = "\t")
 expenditure
 ## plotting (y,x1)
 plot(expenditure$X1,expenditure$Y, main = "Scatter plot of Y versus X1", ylab= "per capita personal income in state", xlab= "per capital expenditure on shelters/housing assistance in state")
@@ -90,7 +90,12 @@ plot(expenditure$X3,expenditure$X2, main = "Scatter plot of X3 versus X2", ylab=
 ## Part 2
 ## plotting y and region
 plot(expenditure$Region,expenditure$Y, main = "Histogram of Y and Region", xlab= "Region", ylab= "per capita expenditure on shelters/housing assistance in state")
-
+## calculate average per capita housing expenses for each region
+mean_expenditures <- tapply(expenditure$Y, expenditure$Region,mean)
+mean_expenditures
+## add the mean values to the plot as points
+points(names(mean_expenditures), mean_expenditures,
+       col = "red", pch= 19)
 
 ## Part 3
 ## plotting y and X1
@@ -130,8 +135,8 @@ plot(expenditure$X1~expenditure$Y,
               ylab= "per capita personal income in state")
 legend("topleft",
        legend=c("Northeast", "North Central", "South", "West"),
-                 col= point_colors,
-                 pch=point_shapes)
+                 col= c("red", "green", "blue", "orange"),
+                 pch= c(17,18,15,16))
 
 
 
