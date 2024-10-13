@@ -1,0 +1,36 @@
+﻿Question 1
+1. Calculating chi-squared in R  
+   1. Chi squared value was found to be 3.791168
+   2. Tried calculating by hand too just to be sure:
+   3.         2. Calculating the p-value in R
+      1.         2. The degrees of freedom calculated = 2 and the p-value = 0.1502306
+      3. Because in this case the p-value is greater than the significance level, a=0.1, we fail to reject the null hypothesis as there isn’t sufficient evidence to conclude that there’s a statistically significant association between socioeconomic status and bribe solicitation. 
+         3. Calculating standardised residuals in R 
+         1.            2. 
+
+	Not stopped 
+	Bribe requested
+	Stopped/given warning
+	Upper Class
+	0.1360828
+	-0.8153742
+	0.818923
+	Lower Class
+	-0.1825742
+	1.0939393
+	-1.098701
+	            4. A standardised residual of approximately 0 would suggest that the observed and expected frequencies are similar whereas residuals of greater than 2 or less than -2 would indicate some significant deviation from the observed/expected values, meaning that that specific element would contribute more to the chi-squared value calculated. However, as there are no residuals greater than 2 or less than -2, in this case I think it is reasonable to expect that the values further from 0, such as 1.09 (bribe requested, lower class) and -1.09 (stopped, lower class) contributed a bit more to the chi-squared values. 
+
+
+Question 2
+            1. Stating the hypotheses: 
+            1. H0 (null hypothesis): Having a female leader has no effect on the number of new/repaired drinking water facilities in a village. 
+            2. H1 (alternative hypothesis): Having a female leader leads to a greater number of new/repaired drinking water facilities in a village. 
+            2. Running a bivariate regression in R
+            1. The two variables I want to investigate are “female” (which represents whether or not a village has a woman leader) and “water” (represents  the number of new/repaired drinking water facilities in a village) however because “female” is a binary variable, I found the regression a bit more complicated at first.
+            2.               3. I started by plotting the two variables:   
+            4. Then added in the regression line (red):
+            5.   
+
+               3. It does seem like in general, the number of new/repaired drinking water facilities is higher when there is a female leader. However, I want to confirm this so I looked at the model summary in R:
+               1.                  2. When female=0, or there is a male leader, the average number of new/repaired drinking water facilities is 14.813 (the intercept), and when female=1, there’s a female leader, the average number of new/repaired drinking water facilities is 7.864 (women$female coefficient) higher than if the leader was male. Since the p-value is 0.04126, these results are significant for a=0.05, thus; we can reject the null hypothesis and conclude that having a female leader leads to a higher number of new/repaired drinking water facilities.
