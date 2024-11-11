@@ -1,0 +1,221 @@
+\textbf{Problem Set 3}
+\textit{Question 1}
+	1. # estimate the regression manually
+	lm_by_hand <- function(data, predictors, outcome) {
+		# ensure predictors is a vector of column names
+		if (!is.character(predictors)) predictors <- as.character(predictors)
+		
+		# creating matrices
+		X <- as.matrix(cbind(1, data[, predictors]))  # add a column of 1s for the intercept
+		Y <- as.matrix(data[, outcome])
+		
+		# calculating betas (coefficients)
+		betas <- solve(t(X) %*% X) %*% (t(X) %*% Y)
+		rownames(betas) <- c("Intercept", predictors)
+		
+		# number of observations and parameters
+		n <- nrow(X)
+		k <- ncol(X)
+		
+		# estimating sigma^2 (variance of the residuals)
+		residuals <- Y - X %*% betas
+		sigma_squared <- sum(residuals^2) / (n - k)
+		
+		# covariance matrix for betas
+		var_covar_mat <- sigma_squared * solve(t(X) %*% X)
+		
+		# SEs for coefficient estimates
+		SEs <- sqrt(diag(var_covar_mat))
+		
+		# t-statistics and p-values
+		t_stats <- betas / SEs
+		p_values <- 2 * pt(abs(t_stats), df = n - k, lower.tail = FALSE)
+		
+		# return all results in a list
+		return(list(
+		coefficients = betas,
+		standard_errors = SEs,
+		t_statistics = t_stats,
+		p_values = p_values,
+		residuals = residuals,
+		sigma_squared = sigma_squared,
+		var_covar_matrix = var_covar_mat
+		))
+	}
+	
+	
+	#trying this
+	result1 <- lm_by_hand(data = incumbents, predictors = "difflog", outcome = "voteshare")
+	result1
+	# print results
+	print(result1$coefficients)       # coefficients
+	print(result1$standard_errors)    # SEs
+	print(result1$t_statistics)       # t-statistics
+	print(result1$p_values)           # p-values
+	
+	
+	#trying the built-in lm function
+	auto_results1 <- lm(voteshare ~ difflog, data= incumbents)
+	summary(auto_results1)
+	
+	2. #making a scatterplot
+	ggplot(incumbents, aes(x = difflog, y = voteshare)) +
+	geom_point(size = 1) +  # adjust the size of the points
+	geom_smooth(method = "lm", col = "blue") +
+	labs(title = "Vote Share vs Difference in Log Spending", 
+	x = "Difference in Log Spending", 
+	y = "Vote Share")
+	
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Users/claireott/Downloads/Q1scatterplot}
+	\caption{}
+	\label{fig:q1scatterplot}
+\end{figure}
+
+	3. #getting/saving residuals
+	residuals1 <- resid(auto_results1)
+	residuals1
+
+	4. #writing the prediction equation
+	predition = intercept + (slope x input value for difflog)
+	\hat{y}= 0.579031 + 0.0461666 x difflog
+	
+\textit{Question 2}
+	1. #running a regression where outcome variable is presvote and explanatory is difflog 
+	#using the function from Q1
+	result2 <- lm_by_hand(data = incumbents, predictors = "difflog", outcome = "presvote")
+	result2
+	# print results
+	print(result2$coefficients)       # coefficients
+	print(result2$standard_errors)    # SEs
+	print(result2$t_statistics)       # t-statistics
+	print(result2$p_values)           # p-values
+	
+	
+	#trying the built-in lm function
+	auto_results1 <- lm(voteshare ~ difflog, data= incumbents)
+	summary(auto_results1)
+	2. #making a scatterplot
+	ggplot(incumbents, aes(x = difflog, y = presvote)) +
+	geom_point(size = 1) +  # adjust the size of the points
+	geom_smooth(method = "lm", col = "blue") +
+	labs(title = "Vote Share vs Difference in Log Spending", 
+	x = "Difference in Log Spending", 
+	y = "Vote Share")
+	
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Users/claireott/Downloads/Q2scatterplot}
+	\caption{}
+	\label{fig:q2scatterplot}
+\end{figure}
+	3. #getting/saving residuals
+	residuals2 <- resid(auto_results2)
+	residuals2
+	4. #writing the prediction equation
+	predition = intercept + (slope x input value for difflog)
+	\hat{y}= 0.507583 + 0.023837 x difflog
+	
+\textit{Question 3}
+	1. #running a regression where outcome variable is voteshare and explanatory is presvote 
+	#using the function from Q1
+	result3 <- lm_by_hand(data = incumbents, predictors = "presvote", outcome = "voteshare")
+	result3
+	# print results
+	print(result3$coefficients)       # coefficients
+	print(result3$standard_errors)    # SEs
+	print(result3$t_statistics)       # t-statistics
+	print(result3$p_values)           # p-values
+	
+	#trying the built-in lm function
+	auto_results3 <- lm(voteshare ~ presvote, data= incumbents)
+	summary(auto_results3)
+	
+	2. #making a scatterplot
+	ggplot(incumbents, aes(x = presvote, y = voteshare)) +
+	geom_point(size = 1) +  # adjust the size of the points
+	geom_smooth(method = "lm", col = "blue") +
+	labs(title = "Vote Share vs Electoral Success", 
+	x = "Electoral Success", 
+	y = "Vote Share")
+	
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Users/claireott/Downloads/Q3scatterplot}
+	\caption{}
+	\label{fig:q3scatterplot}
+\end{figure}
+	3. #getting/saving residuals
+	residuals3 <- resid(auto_results3)
+	residuals3
+	4. #writing the prediction equation
+	predition = intercept + (slope x input value for presvote)
+	\hat{y}= 0.441330 + 0.388018 x presvote
+	
+\textit{Question 4}
+	1. #running a regression where outcome variable is Q1 residuals and explanatory is Q2 residuals 
+	## with the built-in lm function
+	auto_results4 <- lm(residuals1 ~ residuals2)
+	summary(auto_results4)
+	2. #making a scatterplot
+	ggplot(incumbents, aes(x = residuals2, y = residuals1)) +
+	geom_point(size = 1) +  # adjust the size of the points
+	geom_smooth(method = "lm", col = "blue") +
+	labs(title = "Q1 Residuals vs Q2 Residuals", 
+	x = "Q2 residuals", 
+	y = "Q1 residuals")
+% TODO: \usepackage{graphicx} required
+\begin{figure}
+	\centering
+	\includegraphics[width=0.7\linewidth]{Users/claireott/Downloads/Q4scatterplot}
+	\caption{}
+	\label{fig:q4scatterplot}
+\end{figure}
+	3. #Writing the predicution equation
+	predition = intercept + (slope x input value for residuals2)
+	\hat{y}= 3.876e-17 + 2.569e-01 x residuals2
+
+\textit{Question 5}
+	1. #running a regression where outcome variable is voteshare and explanatory are difflog and presvote 
+	#using the function from Q1
+	result5 <- lm_by_hand(data = incumbents, predictors = c("difflog", "presvote"), outcome = "voteshare")
+	result5
+	# print results
+	print(result5$coefficients)       # coefficients
+	print(result5$standard_errors)    # SEs
+	print(result5$t_statistics)       # t-statistics
+	print(result5$p_values)           # p-values
+	
+	#trying the built-in lm function
+	auto_results5 <- lm(voteshare ~ difflog + presvote, data = incumbents)
+	summary(auto_results5)
+	
+	2. # write the prediction equation
+	cat("Prediction equation: voteshare =", coef(auto_results5)[1], "+", coef(auto_results5)[2], "* difflog +", coef(auto_results5)[3], "* presvote")
+	voteshare = 0.4486442 + 0.03554309 * difflog + 0.256877 * presvote
+	
+	3. #comparing with results from Q4 to see what is identical
+	# compare the coefficients
+	identical(auto_results4$coefficients, auto_results5$coefficients)  # TRUE if identical
+	# compare the residuals
+	identical(auto_results4$residuals, auto_results5$residuals)  # TRUE if identical
+	# compare the variance-covariance matrices
+	identical(auto_results4$var_covar_matrix, auto_results5$var_covar_matrix)  # TRUE if identical
+	# compare sigma_squared (estimated residual variance)
+	identical(auto_results4$sigma_squared, auto_results5$sigma_squared)  # TRUE if identical
+	
+	
+## I don't think that I set this up properly in Latex, the program keeps crashing on my laptop and I wasn't able to download it onto any of the 
+## tcd computer lab computers to try and complete the assignment there so the PDF uploaded is probably better to look at for my answers. 
+	
+	
+	
+	
+	
+	
+	
+	
