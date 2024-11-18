@@ -1,0 +1,128 @@
+### Problem set 4
+getwd()
+# remove objects
+rm(list=ls())
+# detach all libraries
+detachAllPackages <- function() {
+	basic.packages <- c("package:stats", "package:graphics", "package:grDevices", "package:utils", "package:datasets", "package:methods", "package:base")
+	package.list <- search()[ifelse(unlist(gregexpr("package:", search()))==1, TRUE, FALSE)]
+	package.list <- setdiff(package.list, basic.packages)
+	if (length(package.list)>0)  for (package in package.list) detach(package,  character.only=TRUE)
+}
+detachAllPackages()
+
+# load libraries
+pkgTest <- function(pkg){
+	new.pkg <- pkg[!(pkg %in% installed.packages()[,  "Package"])]
+	if (length(new.pkg)) 
+	install.packages(new.pkg,  dependencies = TRUE)
+	sapply(pkg,  require,  character.only = TRUE)
+}
+# load packages
+lapply(c("stargazer","vioplot","arm","broom","ggplot2","fastDummies"),  pkgTest)
+
+# loading/running the programs as described in the assignment
+install.packages("car")
+library("car")
+data(Prestige)
+help(Prestige)
+Prestige
+
+## Question 1
+# creating a new variable "professional" from "type" so that professionals = 1 and other (blue/white collar) = 0
+Prestige$professional <- ifelse(Prestige$type == "prof", 1, 0)
+# checking to see if it worked
+print(Prestige)
+
+# running a linear model with interaction
+interact_reg <- lm(prestige ~ income * professional, data=Prestige)
+summary(interact_reg)
+
+# prediction equation
+coefficients <- coef(interact_reg)
+cat("prestige =", 
+coefficients[1], "+",  
+coefficients[2], "* income +",  
+coefficients[3], "* professional +",  
+coefficients[4], "* income * professional\n")  
+
+## Writing the prediction equation
+# ŷ = B0 + B1(income) + B2(professional) + B3(income x professional)
+# Prestige = 21.14266 + 0.003170909 x income + 37.78128 x professional - 0.002325709 x (income x professional) 
+# Interpreting the coefficient for income:
+# The coefficient for income, which for this dataset is measured in (Canadian) dollars, measures the increase in prestige for every dollar earned. 
+# Interpreting the coefficient for professional 
+# The coefficient for professional represents the effect of being a professional (professional = 1) versus a blue or white collar worker (professional = 0) when #income is 0. 
+# Calculating the change in ŷ (prestige score) when there’s a $1,000 increase in income and professional = 1
+# Prestige = 21.14266 + 0.003170909 x income + 37.78128 - 0.002325709 x income 
+# Solve for income = 1,000
+# Prestige = 21.14266 + 0.003170909 x 1,000 + 37.78128 - 0.002325709 x 1,000
+# Prestige = 59.76914
+# Prestige score for a professional occupation will increase by approximately 59.8 when there is a $1,000 increase in income. 
+
+# Calculating the effect of changing professions from non-professional to professional when income is $6,000:
+# To do this, I need to find the predicted values of ŷ (prestige) for both groups and then find the difference between them. 
+# For non-professional (professional = 0)
+# Prestige = 21.14266 + 0.003170909 x income
+# Prestige = 21.14266 + 0.003170909 x 6,000
+# Prestige = 40.168144
+# For professional (professional = 1)
+# Prestige = 21.14266 + 0.003170909 x income + 37.78128 - 0.002325709 x income
+# Prestige = 21.14266 + 0.003170909 x 6,000 + 37.78128 - 0.002325709 x 6,000
+# Prestige = 63.99514
+# Calculating the change in ŷ
+# Δŷ = prestigeprofessional - prestigenon-professional
+# Δŷ = 63.99514 - 40.168144
+# ŷ = 23.826996 
+# When income is $6,000, changing professions from non-professional to professional affects prestige, or ŷ, by 23.826996. 
+
+
+## Question 2
+# setting/defining the coefficients and se's
+coef_signs <- 0.042
+se_signs <- 0.016
+coef_adjacent <- 0.042
+se_adjacent <- 0.013
+constant <- 0.302
+r_squared <- 0.094
+alpha <- 0.05
+df <- 128 
+
+#part a
+t_signs <- coef_signs / se_signs
+t_signs
+
+#part b
+t_adjacent <- coef_adjacent / se_adjacent 
+t_adjacent
+
+Determining if the yard signs have an effect on the vote share:
+Coefficient for precincts with signs: B1 = 0.042
+SE (standard error) for that coefficient: SE = 0.016
+H0 = yard signs have no effect on vote share (B1 = 0)
+Ha= yard signs have an effect on vote share (B1 ≠ 0)
+Getting t-statistic
+T = coefficient / SE → 0.042/0.016 = 2.625 = t
+Getting degrees of freedom
+df = N - k → 131 - 2 - 1 = 128
+At a= 0.05, critical value for a 2-tailed test is approximately ± 1.98
+Since |t| = 2.625 > 1.98, we reject the null hypothesis
+Therefore, we can conclude that having the yard signs in a precinct affects the vote share. 
+Determining whether being next to a precinct with the yard signs affects vote share:
+Coefficient for precincts adjacent to signs: B2 = 0.042
+SE (standard error) for that coefficient: SE = 0.013
+H0 = being adjacent to yard signs has no effect on vote share (B2 = 0)
+Ha= being adjacent to yard signs has an effect on vote share (B2 ≠ 0)
+Getting t-statistic
+T = coefficient / SE → 0.042/0.013 = 3.231 = t
+Getting degrees of freedom
+df = N - k → 131 - 2 - 1 = 128
+At a= 0.05, critical value for a 2-tailed test is approximately ± 1.98
+Since |t| = 3.231 > 1.98, we reject the null hypothesis
+Therefore, we can conclude that being adjacent to a precinct with the yard signs affects the vote share. 
+Interpreting the coefficient for the constant term:
+The coefficient for the constant term, B0, is 0.302. This constant represents the expected vote share for Ken Cuccinelli in precincts without yard signs and that are not adjacent to yard signs. This baseline corresponds to 30.2% of the vote share.
+Evaluating the model fit:
+R2 is 0.094. This means that the model only explains 9.4% of the variation in vote share, suggesting that there are other unmodeled factors, such as demographic and/or voter preferences maybe, that have a more significant role than the presence or proximity to yard signs in determining the vote share in different precincts. In other words, while the findings above suggest that the yard signs are statistically significant to the vote share, they are not the most influential factor. 
+
+
